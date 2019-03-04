@@ -13,7 +13,12 @@ export const redis = new Redis();
 
 export const main = async () => {
   await createConnection();
-  const schema = await buildSchema({ resolvers: [__dirname + '/modules/**/*.?s'] });
+  const schema = await buildSchema({
+    resolvers: [__dirname + '/modules/**/*.?s'],
+    authChecker: ({ context: { req } }) => {
+      return !(!req.session || !req.session.userId);
+    },
+  });
   const apolloServer = new ApolloServer({
     schema,
     formatError: formatArgumentValidationError as any,
