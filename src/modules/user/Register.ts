@@ -1,10 +1,10 @@
 import { Resolver, Query, Mutation, Arg, Authorized, Ctx } from 'type-graphql';
 
 import { User } from '../../entity/User';
-import { RegisterInput } from './register/RegisterInput';
-import { sendEmail } from '../../utils/sendEmail';
-import { createConfirmationUrl } from '../../utils/createConfirmationUrl';
 import { IContext } from '../../types/IContext';
+import { sendEmail } from '../../utils/sendEmail';
+import { RegisterInput } from './register/RegisterInput';
+import { createConfirmationUrl } from '../../utils/createConfirmationUrl';
 
 @Resolver()
 export class RegisterResolver {

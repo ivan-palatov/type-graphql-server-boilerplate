@@ -1,13 +1,14 @@
 import 'dotenv';
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
-import { ApolloServer } from 'apollo-server-express';
+
+import cors from 'cors';
+import Redis from 'ioredis';
 import express from 'express';
-import { buildSchema, formatArgumentValidationError } from 'type-graphql';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
-import Redis from 'ioredis';
-import cors from 'cors';
+import { createConnection } from 'typeorm';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema, formatArgumentValidationError } from 'type-graphql';
 
 export const redis = new Redis();
 

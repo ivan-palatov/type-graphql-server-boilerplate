@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity, BeforeInsert } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { ObjectType, Field, ID, Root } from 'type-graphql';
+import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity, BeforeInsert } from 'typeorm';
 
 @ObjectType()
 @Entity()
