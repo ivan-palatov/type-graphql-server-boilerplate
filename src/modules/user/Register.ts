@@ -1,25 +1,19 @@
-import { Resolver, Query, Mutation, Arg, FieldResolver, Root } from 'type-graphql';
-import { User } from '../../entity/User';
+import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 
-@Resolver(User)
+import { User } from '../../entity/User';
+import { RegisterInput } from './register/RegisterInput';
+
+@Resolver()
 export class RegisterResolver {
   @Query(returns => String)
   hello() {
     return 'hello';
   }
 
-  @FieldResolver()
-  fullName(@Root() parent: User) {
-    return `${parent.firstName} ${parent.lastName}`;
-  }
-
   @Mutation(returns => User)
-  async register(
-    @Arg('firstName') firstName: string,
-    @Arg('lastName') lastName: string,
-    @Arg('email') email: string,
-    @Arg('password') password: string
-  ): Promise<User> {
+  async register(@Arg('data') { email, firstName, lastName, password }: RegisterInput): Promise<
+    User
+  > {
     const user = await User.create({ firstName, lastName, email, password }).save();
     return user;
   }

@@ -10,10 +10,11 @@
     "removeComments": true,
     "strict": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "strictPropertyInitialization": false,
+    "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",
       "./src/types"
