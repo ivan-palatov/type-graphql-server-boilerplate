@@ -22,7 +22,8 @@ export const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     formatError: formatArgumentValidationError as any,
-    context: ({ req }) => ({ req }),
+    context: ({ req }) => ({ req, redis }),
+    debug: false,
   });
 
   const app = express();
