@@ -1,26 +1,27 @@
 import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { UserInputError, ApolloError } from 'apollo-server-core';
 
 import { User } from '../../entity/User';
 import { IContext } from '../../types/IContext';
-import { UserInputError } from 'apollo-server-core';
+import { CONFIRM_EMAIL } from '../../constants/redisPrefixes';
 
 @Resolver()
 export class ConfirmEmailResolver {
-  @Mutation(returns => Boolean)
-  async confirmEmail(
-    @Arg('token') token: string,
-    @Ctx() { redis }: IContext
-  ): Promise<boolean> {
-    const userId = await redis.get(token);
+  @Mutation(returns => User)
+  async confirmEmail(@Arg('token') token: string, @Ctx() { redis, req }: IContext): Promise<User> {
+    const userId = await redis.get(`${CONFIRM_EMAIL}${token}`);
     if (!userId) {
       throw new UserInputError('Invalid token');
     }
     try {
-      await User.update({ id: parseInt(userId) }, { confirmed: true });
-      await redis.del(token);
-      return true;
+      const user = await User.findOne(parseInt(userId));
+      user!.confirmed = true;
+      await user!.save();
+      await redis.del(`${CONFIRM_EMAIL}${token}`);
+      req.session!.userId = user!.id;
+      return user!;
     } catch {
-      return false;
+      throw new ApolloError('Something went wrong');
     }
   }
 }

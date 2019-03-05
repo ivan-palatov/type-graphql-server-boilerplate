@@ -1,7 +1,8 @@
 import { Redis } from 'ioredis';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 export interface IContext {
   req: Request;
+  res: Response;
   redis: Redis;
 }
