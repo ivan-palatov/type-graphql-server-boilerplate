@@ -1,7 +1,7 @@
 import { InputType, Field } from 'type-graphql';
+import { Length } from 'class-validator';
 
 import { User } from '../../../entity/User';
-import { Length } from 'class-validator';
 
 @InputType()
 export class ChangePasswordInput implements Partial<User> {

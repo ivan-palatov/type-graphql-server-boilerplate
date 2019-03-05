@@ -1,9 +1,9 @@
+import { UserInputError, ApolloError } from 'apollo-server-core';
 import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
 
 import { User } from '../../entity/User';
 import { IContext } from '../../types/IContext';
-import { UserInputError, ApolloError } from 'apollo-server-core';
 import { sendForgotPasswordEmail } from '../../utils/sendForgotPasswordEmail';
 import { FORGOT_PASSWORD } from '../../constants/redisPrefixes';
 

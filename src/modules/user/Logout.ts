@@ -1,4 +1,5 @@
 import { Resolver, Mutation, Ctx } from 'type-graphql';
+
 import { IContext } from '../../types/IContext';
 
 @Resolver()

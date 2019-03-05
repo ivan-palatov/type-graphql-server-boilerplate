@@ -1,11 +1,11 @@
 import { Resolver, Query, Mutation, Arg, Authorized, Ctx } from 'type-graphql';
+import { ApolloError } from 'apollo-server-core';
 
 import { User } from '../../entity/User';
 import { IContext } from '../../types/IContext';
 import { sendEmail } from '../../utils/sendEmail';
 import { RegisterInput } from './register/RegisterInput';
 import { createConfirmationUrl } from '../../utils/createConfirmationUrl';
-import { ApolloError } from 'apollo-server-core';
 
 @Resolver()
 export class RegisterResolver {

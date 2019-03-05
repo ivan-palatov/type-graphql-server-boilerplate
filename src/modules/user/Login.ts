@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { UserInputError } from 'apollo-server-core';
 
 import { User } from '../../entity/User';
 import { LoginInput } from './login/LoginInput';
 import { IContext } from '../../types/IContext';
-import { UserInputError } from 'apollo-server-core';
 
 @Resolver()
 export class LoginResolver {
