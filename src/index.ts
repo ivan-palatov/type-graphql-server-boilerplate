@@ -8,18 +8,14 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
-import { buildSchema, formatArgumentValidationError } from 'type-graphql';
+import { formatArgumentValidationError } from 'type-graphql';
+import { createSchema } from './utils/createSchema';
 
 export const redis = new Redis();
 
 export const main = async () => {
   await createConnection();
-  const schema = await buildSchema({
-    resolvers: [__dirname + '/modules/**/*.?s'],
-    authChecker: ({ context: { req } }) => {
-      return !(!req.session || !req.session.userId);
-    },
-  });
+  const schema = await createSchema();
   const apolloServer = new ApolloServer({
     schema,
     formatError: formatArgumentValidationError as any,
