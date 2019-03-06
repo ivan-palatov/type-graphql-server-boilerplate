@@ -1,6 +1,6 @@
 import { createConnection } from 'typeorm';
 
-export const testConn = async (drop: boolean = false) => {
+export const testConn = (drop: boolean = false) => {
   return createConnection({
     name: 'default',
     type: 'postgres',
@@ -11,9 +11,6 @@ export const testConn = async (drop: boolean = false) => {
     database: 'type-graphql-server-boilerplate-test',
     synchronize: drop,
     dropSchema: drop,
-    logging: false,
-    entities: [__dirname + '/../entity/**/*.*'],
-    migrations: [__dirname + '/../migration/**/*.ts'],
-    subscribers: [__dirname + '/../subscriber/**/*.ts'],
+    entities: [__dirname + '/../entity/*.*'],
   });
 };

@@ -22,7 +22,9 @@ export class RegisterResolver {
   ) {
     try {
       const user = await User.create({ firstName, lastName, email, password }).save();
-      await sendEmail(email, await createConfirmationUrl(user.id, redis));
+      if (process.env.NODE_ENV !== 'test') {
+        await sendEmail(email, await createConfirmationUrl(user.id, redis));
+      }
       return user;
     } catch {
       throw new ApolloError('Something went wrong');
