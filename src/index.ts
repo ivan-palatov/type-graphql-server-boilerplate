@@ -10,11 +10,16 @@ import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import { formatArgumentValidationError } from 'type-graphql';
 import { createSchema } from './utils/createSchema';
+import { testConn } from './testUtils/testConn';
 
 export const redis = new Redis();
 
 export const main = async () => {
-  await createConnection();
+  if (process.env.NODE_ENV === 'test') {
+    await testConn(true);
+  } else {
+    await createConnection();
+  }
   const schema = await createSchema();
   const apolloServer = new ApolloServer({
     schema,
@@ -35,7 +40,7 @@ export const main = async () => {
         client: redis as any,
       }),
       name: 'rid',
-      secret: process.env.SESSION_SECRET!,
+      secret: '41faf412fasfr32',
       resave: false,
       saveUninitialized: false,
       cookie: {

@@ -1,99 +1,104 @@
-import { gCall } from './gCall';
+import rp from 'request-promise';
 
-const registerMutation = `mutation Register($data: RegisterInput!) {
-  register(data: $data) {
-    id
-    email
-    fullName
-  }
-}`;
-
-const confirmEmail = `mutation ConfirmEmail($token: String!) {
-  confirmEmail(token: $token) {
-    id
-    email
-    fullName
-  }
-}`;
-
-const login = `mutation Login($data: LoginInput!) {
-  login(data: $data) {
-    id
-    email
-    fullName
-  }
-}`;
-
-const me = `{
-  me {
-    id
-    email
-    fullName
-  }
-}`;
-
-const logout = `mutation {
-  logout
-}`;
-
-const changePassword = `mutation ChangePassword($data: ChangePasswordInput!) {
-  changePassword(data: $data) {
-    id
-    email
-    fullName
-  }
-}`;
+const url = 'http://localhost:4000/graphql';
+const options = {
+  withCredentials: true,
+  jar: rp.jar(),
+  json: true,
+};
 
 export class TestClient {
   static register(email: string, password: string, firstName: string, lastName: string) {
-    return gCall({
-      source: registerMutation,
-      variableValues: {
-        data: {
-          firstName,
-          lastName,
-          email,
-          password,
-        },
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `
+          mutation {
+            register(
+              data: {
+                email: "${email}"
+                password: "${password}"
+                firstName: "${firstName}"
+                lastName: "${lastName}"
+              }
+            ) {
+              id
+              email
+              fullName
+            }
+          }`,
       },
     });
   }
 
   static confirmEmail(token: string) {
-    return gCall({
-      source: confirmEmail,
-      variableValues: { token },
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `mutation {
+          confirmEmail(token: "${token}") {
+            id
+            email
+            fullName
+          }
+        }`,
+      },
     });
   }
 
   static login(email: string, password: string) {
-    return gCall({
-      source: login,
-      variableValues: {
-        data: {
-          email,
-          password,
-        },
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `mutation {
+          login(data: {email: "${email}", password: "${password}"}) {
+            id
+            email
+            fullName
+          }
+        }`,
       },
     });
   }
 
   static me() {
-    return gCall({
-      source: me,
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `{
+          me {
+            id
+            email
+            fullName
+          }
+        }`,
+      },
     });
   }
 
   static logout() {
-    return gCall({
-      source: logout,
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `mutation {
+          logout
+        }`,
+      },
     });
   }
 
   static changePassword(password: string, token: string) {
-    return gCall({
-      source: changePassword,
-      variableValues: { data: { password, token } },
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `mutation {
+          changePassword(data: {password: "${password}", token: "${token}"}) {
+            id
+            email
+            fullName
+          }
+        }`,
+      },
     });
   }
 }
