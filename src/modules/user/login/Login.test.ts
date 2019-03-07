@@ -28,15 +28,17 @@ describe('Login', () => {
       firstName: 'Jon',
       lastName: 'Snow',
     }).save();
-    const res = await TestClient.login(email, password);
+    const client = new TestClient();
+    const res = await client.login(email, password);
     expect(res.data.login).toEqual({ id: `${user.id}`, email, fullName: 'Jon Snow' });
     expect(res.errors).toBeUndefined();
   });
   it('should not login if credentials are invalid', async () => {
     const email1 = faker.internet.email();
     const password1 = faker.internet.password();
-    const res1 = await TestClient.login(email, password1);
-    const res2 = await TestClient.login(email1, password);
+    const client = new TestClient();
+    const res1 = await client.login(email, password1);
+    const res2 = await client.login(email1, password);
     expect(res1.data).toBeNull();
     expect(res1.errors).not.toBeUndefined();
     expect(res2.data).toBeNull();
@@ -47,7 +49,8 @@ describe('Login', () => {
     const email1 = faker.internet.email();
     const password1 = faker.internet.password();
     TestClient.register(email1, password1, 'john', 'hon');
-    const res = await TestClient.login(email1, password1);
+    const client = new TestClient();
+    const res = await client.login(email1, password1);
     expect(res.errors).not.toBeUndefined();
     expect(res.data).toBeNull();
   });

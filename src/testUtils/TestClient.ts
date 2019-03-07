@@ -8,6 +8,16 @@ const options = {
 };
 
 export class TestClient {
+  options: rp.RequestPromiseOptions;
+
+  constructor() {
+    this.options = {
+      withCredentials: true,
+      jar: rp.jar(),
+      json: true,
+    };
+  }
+
   static register(email: string, password: string, firstName: string, lastName: string) {
     return rp.post(url, {
       ...options,
@@ -46,9 +56,9 @@ export class TestClient {
     });
   }
 
-  static login(email: string, password: string) {
+  login(email: string, password: string) {
     return rp.post(url, {
-      ...options,
+      ...this.options,
       body: {
         query: `mutation {
           login(data: {email: "${email}", password: "${password}"}) {
@@ -61,9 +71,9 @@ export class TestClient {
     });
   }
 
-  static me() {
+  me() {
     return rp.post(url, {
-      ...options,
+      ...this.options,
       body: {
         query: `{
           me {
@@ -76,9 +86,9 @@ export class TestClient {
     });
   }
 
-  static logout() {
+  logout() {
     return rp.post(url, {
-      ...options,
+      ...this.options,
       body: {
         query: `mutation {
           logout
