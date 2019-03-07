@@ -11,6 +11,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { formatArgumentValidationError } from 'type-graphql';
 import { createSchema } from './utils/createSchema';
 import { testConn } from './testUtils/testConn';
+import QueryComplexity, { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
 
 export const redis = new Redis();
 
@@ -26,6 +27,18 @@ export const main = async () => {
     formatError: formatArgumentValidationError as any,
     context: ({ req, res }) => ({ req, res, redis }),
     debug: false,
+    validationRules: [
+      QueryComplexity({
+        maximumComplexity: 50,
+        variables: {},
+        estimators: [
+          fieldConfigEstimator(),
+          simpleEstimator({
+            defaultComplexity: 1,
+          }),
+        ],
+      }),
+    ] as any,
   });
 
   const app = express();
