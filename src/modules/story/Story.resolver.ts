@@ -47,19 +47,19 @@ export class StoryResolver {
     sortOrder,
     take,
   }: SeekPaginationInput) {
+    const query = Story.createQueryBuilder('s')
+      .select('s.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author')
+      .leftJoinAndSelect('s.tags', 'tag');
     if (!lastId || !lastInOrder) {
-      return await Story.find({
-        select: ['id', 'title', 'description', 'rating', 'views', 'date', 'length', 'author'],
-        relations: ['tags'],
-        order: { [sortBy]: sortOrder },
-        take,
-      });
+      return await query
+        .orderBy(`s.${sortBy} ${sortOrder}, s.id ${sortOrder}`)
+        .take(take)
+        .getMany();
     }
     const where = `(s.${sortBy}, s.id) ${sortOrder === 'DESC' ? '<' : '>'} (:lastInOrder, :lastId)`;
-    return await Story.createQueryBuilder('s')
-      .select('s.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author')
-      .leftJoinAndSelect('s.tags', 'tag')
+    return await query
       .where(where, { lastInOrder, lastId })
+      .orderBy(`s.${sortBy} ${sortOrder}, s.id ${sortOrder}`)
       .take(take)
       .getMany();
   }
