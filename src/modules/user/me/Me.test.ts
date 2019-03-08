@@ -1,9 +1,8 @@
-import { Connection } from 'typeorm';
 import faker from 'faker';
-
-import { testConn } from '../../../testUtils/testConn';
-import { TestClient } from '../../../testUtils/TestClient';
+import { Connection } from 'typeorm';
 import { User } from '../../../entity/User';
+import { TestClient } from '../../../testUtils/TestClient';
+import { testConn } from '../../../testUtils/testConn';
 
 faker.seed(4);
 const email = faker.internet.email();

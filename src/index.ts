@@ -1,17 +1,16 @@
-import 'dotenv';
-import 'reflect-metadata';
-
+import { ApolloServer } from 'apollo-server-express';
+import connectRedis from 'connect-redis';
 import cors from 'cors';
-import Redis from 'ioredis';
+import 'dotenv';
 import express from 'express';
 import session from 'express-session';
-import connectRedis from 'connect-redis';
-import { createConnection } from 'typeorm';
-import { ApolloServer } from 'apollo-server-express';
-import { formatArgumentValidationError } from 'type-graphql';
-import { createSchema } from './utils/createSchema';
-import { testConn } from './testUtils/testConn';
 import QueryComplexity, { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
+import Redis from 'ioredis';
+import 'reflect-metadata';
+import { formatArgumentValidationError } from 'type-graphql';
+import { createConnection } from 'typeorm';
+import { testConn } from './testUtils/testConn';
+import { createSchema } from './utils/createSchema';
 
 export const redis = new Redis();
 

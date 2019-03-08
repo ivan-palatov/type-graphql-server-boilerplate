@@ -50,8 +50,7 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "start": "ts-node-dev --respawn --files src/index.ts",
-    "db:test": "ts-node src/testUtils/setup.ts",
+    "start": "ts-node-dev --type-check --respawn --files src/index.ts",
     "test-server": "cross-env NODE_ENV=test nodemon",
     "test": "jest --detectOpenHandles --forceExit --runInBand"
   }
