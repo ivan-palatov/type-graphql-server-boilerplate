@@ -33,13 +33,13 @@ export class Story extends BaseEntity {
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
-  description: string;
+  description?: string;
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
-  introduction: string;
+  introduction?: string;
 
-  @Field()
+  @Field({ complexity: 6 })
   @Column('text')
   text: string;
 
@@ -71,10 +71,10 @@ export class Story extends BaseEntity {
   @Field({ nullable: true })
   @Index()
   @Column('character varying', { nullable: true })
-  seriesLink: string;
+  seriesLink?: string;
 
   @Field(type => [Tag])
-  @ManyToMany(type => Tag, tag => tag.stories)
+  @ManyToMany(type => Tag, tag => tag.stories, { eager: true })
   @JoinTable()
   tags: Tag[];
 }
