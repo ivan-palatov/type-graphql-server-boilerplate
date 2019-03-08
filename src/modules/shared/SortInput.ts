@@ -1,9 +1,9 @@
 import { IsIn } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
-import { Pagination } from './Pagination';
+import { PaginationInput } from './PaginationInput';
 
 @InputType()
-export class Sort extends Pagination {
+export class SortInput extends PaginationInput {
   @Field({ description: 'Allowed values: title, rating, views, length, date' })
   @IsIn(['title', 'rating', 'views', 'length', 'date'])
   sortBy: string;

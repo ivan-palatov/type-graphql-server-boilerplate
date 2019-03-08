@@ -74,7 +74,7 @@ export class Story extends BaseEntity {
   seriesLink?: string;
 
   @Field(type => [Tag])
-  @ManyToMany(type => Tag, tag => tag.stories, { eager: true })
+  @ManyToMany(type => Tag, tag => tag.stories)
   @JoinTable()
   tags: Tag[];
 }
