@@ -23,7 +23,7 @@ export class Story extends BaseEntity {
   @Column('character varying')
   title: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('character varying')
   link: string;
 
@@ -54,7 +54,7 @@ export class Story extends BaseEntity {
   @Column('real', { default: 0 })
   rating: number;
 
-  @Field(type => Int)
+  @Field(type => Int, { nullable: true })
   @Index()
   @Column('int', { default: 0 })
   votes: number;

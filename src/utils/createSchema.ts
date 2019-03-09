@@ -6,4 +6,5 @@ export const createSchema = () =>
     authChecker: ({ context: { req } }) => {
       return !(!req.session || !req.session.userId);
     },
+    dateScalarMode: 'isoDate',
   });

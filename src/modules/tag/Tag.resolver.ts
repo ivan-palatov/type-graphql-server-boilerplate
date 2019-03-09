@@ -5,11 +5,11 @@ import { SortInput } from '../shared/SortInput';
 
 @Resolver(of => Tag)
 export class TagResolver {
-  @FieldResolver()
+  @FieldResolver(returns => [Story], { nullable: true })
   async stories(@Root() tag: Tag, @Arg('data') { skip, take, sortBy, sortOrder }: SortInput) {
-    return await Story.createQueryBuilder('s')
+    const stories: Story[] = await Story.createQueryBuilder('s')
       .select(
-        's.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author, ARRAY_AGG(t.name) as tags'
+        's.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author, ARRAY_AGG(t.id) as tags'
       )
       .innerJoin('story_tags_tag', 'st', 'st."storyId" = s.id')
       .innerJoin('tag', 't', 'st."tagId" = t.id')
@@ -19,6 +19,8 @@ export class TagResolver {
       .skip(skip)
       .take(take)
       .getRawMany();
+    console.log(stories);
+    return stories;
   }
 
   @Query(returns => [Tag])

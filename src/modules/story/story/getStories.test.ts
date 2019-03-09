@@ -18,7 +18,7 @@ afterAll(async () => {
 
 describe('getStories', () => {
   it('should get stories', async () => {
-    expect.assertions(6);
+    expect.assertions(7);
     const res = await TestClient.getStories();
     expect(res.data).not.toBeNull();
     expect(res.errors).toBeUndefined();
@@ -31,5 +31,6 @@ describe('getStories', () => {
     expect(stories[0].title).toEqual(story!.title);
     expect(stories[0].tags).toEqual(story!.tags.map(id => `${id}`));
     expect(count).toBeGreaterThanOrEqual(11);
+    expect(stories[0].length).toBeGreaterThanOrEqual(stories[1].length);
   });
 });

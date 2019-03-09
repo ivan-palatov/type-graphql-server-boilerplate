@@ -154,6 +154,7 @@ export class TestClient {
               title
               description
               tags
+              length
             }
           }
         }`,
