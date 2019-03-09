@@ -16,7 +16,7 @@ import { Tag } from './Tag';
 export class Story extends BaseEntity {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
-  readonly id: number;
+  id: number;
 
   @Field()
   @Index()
@@ -40,7 +40,7 @@ export class Story extends BaseEntity {
   @Column('text', { nullable: true })
   introduction?: string;
 
-  @Field({ complexity: 6 })
+  @Field({ complexity: 6, nullable: true })
   @Column('text')
   text: string;
 
@@ -74,10 +74,12 @@ export class Story extends BaseEntity {
   @Column('character varying', { nullable: true })
   seriesLink?: string;
 
-  @Field(type => [ID], { nullable: true })
   @ManyToMany(type => Tag, tag => tag.stories)
   @JoinTable()
   tags: Tag[];
+
+  @Field(type => [Int], { nullable: true })
+  tagIds: number[];
 
   @BeforeInsert()
   setLength() {
