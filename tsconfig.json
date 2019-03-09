@@ -15,10 +15,7 @@
     "noUnusedLocals": true,
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "./src/types"
-    ]
+    "typeRoots": ["node_modules/@types", "./src/types"]
   },
   "exclude": ["node_modules"],
   "include": ["./src/**/*.ts"]

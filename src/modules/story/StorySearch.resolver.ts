@@ -21,7 +21,7 @@ export class StorySearchResolver {
     take,
     sortBy,
     sortOrder,
-  }: StorySearchInput) {
+  }: StorySearchInput): Promise<PaginatedResult> {
     let query = Story.createQueryBuilder('s')
       .select(
         's.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author, ARRAY_AGG(t.name) as tags'
@@ -84,10 +84,17 @@ export class StorySearchResolver {
         query = query.having('t.id != excludeTagId', { excludeTagId: excludeTagIds[0] });
       }
     }
-    query
-      .orderBy(sortBy, sortOrder as any)
-      .skip(skip)
-      .take(take)
-      .getRawMany();
+    // TODO: might be a good idea to remove agregate fns from count, but its gonna get even more uglier
+    // TODO: create function for handling the ifs and maybe just pipe it then?
+    const [count, stories] = await Promise.all([
+      query.getCount(),
+      query
+        .orderBy(sortBy, sortOrder as any)
+        .skip(skip)
+        .take(take)
+        .getRawMany(),
+    ]);
+
+    return { stories, count };
   }
 }
