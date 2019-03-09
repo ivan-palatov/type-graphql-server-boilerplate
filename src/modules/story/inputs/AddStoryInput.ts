@@ -1,4 +1,4 @@
-import { Length } from 'class-validator';
+import { Length, MaxLength } from 'class-validator';
 import { Field, ID, InputType } from 'type-graphql';
 import { Story } from '../../../entity/Story';
 
@@ -11,6 +11,10 @@ export class AddStoryInput implements Partial<Story> {
   @Field({ nullable: true })
   @Length(10, 255)
   description?: string;
+
+  @Field({ defaultValue: '' })
+  @MaxLength(255)
+  link: string;
 
   @Field()
   @Length(1000)

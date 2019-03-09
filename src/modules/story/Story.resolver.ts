@@ -2,7 +2,7 @@ import { UserInputError } from 'apollo-server-core';
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Story } from '../../entity/Story';
 import { PaginatedResult } from '../shared/PaginatedResult';
-import { SeekPaginationInput } from '../shared/SeedPaginationInput';
+import { SeekPaginationInput } from '../shared/SeekPaginationInput';
 import { SortInput } from '../shared/SortInput';
 import { AddStoryInput } from './inputs/AddStoryInput';
 import { AttachTagsInput } from './inputs/AttachTagsInput';
@@ -19,7 +19,7 @@ export class StoryResolver {
 
   @Query(returns => Story)
   async getStory(@Arg('id') id: number) {
-    const story = await Story.findOne(id);
+    const story = await Story.findOne(id, { loadRelationIds: { relations: ['tags'] } });
     if (!story) {
       throw new UserInputError('Story with that id not found.');
     }
@@ -34,7 +34,7 @@ export class StoryResolver {
       select: ['id', 'title', 'description', 'rating', 'views', 'date', 'length', 'author'],
       skip,
       take,
-      relations: ['tags'],
+      loadRelationIds: { relations: ['tags'] },
       order: { [sortBy]: sortOrder },
     });
     return { stories, count };
@@ -51,13 +51,15 @@ export class StoryResolver {
   }: SeekPaginationInput) {
     const query = Story.createQueryBuilder('s')
       .select('s.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author')
-      .leftJoinAndSelect('s.tags', 'tag');
+      .loadAllRelationIds({ relations: ['s.tags'] });
+    // If first time fetching
     if (!lastId || !lastInOrder) {
       return await query
         .orderBy(`s.${sortBy} ${sortOrder}, s.id ${sortOrder}`)
         .take(take)
         .getMany();
     }
+    // If fetching more than once
     const where = `(s.${sortBy}, s.id) ${sortOrder === 'DESC' ? '<' : '>'} (:lastInOrder, :lastId)`;
     return await query
       .where(where, { lastInOrder, lastId })
@@ -70,7 +72,7 @@ export class StoryResolver {
   async getStoriesByAuthor(@Arg('author') author: string) {
     const stories = await Story.find({
       select: ['id', 'title', 'description', 'rating', 'views', 'date', 'length', 'author'],
-      relations: ['tags'],
+      loadRelationIds: { relations: ['tags'] },
       where: { author },
     });
     if (stories.length === 0) {
@@ -93,13 +95,14 @@ export class StoryResolver {
   }
 
   @Mutation(returns => Story)
-  async addStory(@Arg('data') { title, description, author, text, tagIds }: AddStoryInput) {
+  async addStory(@Arg('data') { title, description, author, text, link, tagIds }: AddStoryInput) {
     try {
-      const story = await Story.create({ title, description, author, text }).save();
+      const story = await Story.create({ title, description, author, text, link }).save();
       await Story.createQueryBuilder('s')
         .relation('s.tags')
         .of(story)
         .add(tagIds);
+      story.tags = tagIds as any;
       return story;
     } catch {
       throw new UserInputError('Arguments are not valid');

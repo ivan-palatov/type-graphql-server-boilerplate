@@ -66,6 +66,7 @@ export const main = async () => {
   apolloServer.applyMiddleware({ app });
 
   app.listen(4000, () => {
+    console.clear();
     console.log(`Server is ready on http://localhost:4000/graphql`);
   });
 };

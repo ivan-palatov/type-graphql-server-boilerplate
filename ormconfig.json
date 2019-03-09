@@ -7,7 +7,7 @@
   "password": "123",
   "database": "type-graphql-server-boilerplate",
   "synchronize": true,
-  "logging": false,
+  "logging": true,
   "entities": ["src/entity/**/*.*"],
   "migrations": ["src/migration/**/*.ts"],
   "subscribers": ["src/subscriber/**/*.ts"],

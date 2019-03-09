@@ -74,7 +74,7 @@ export class Story extends BaseEntity {
   @Column('character varying', { nullable: true })
   seriesLink?: string;
 
-  @Field(type => [Tag])
+  @Field(type => [ID], { nullable: true })
   @ManyToMany(type => Tag, tag => tag.stories)
   @JoinTable()
   tags: Tag[];

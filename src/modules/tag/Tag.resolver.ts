@@ -1,4 +1,4 @@
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Arg, Authorized, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { Story } from '../../entity/Story';
 import { Tag } from '../../entity/Tag';
 import { SortInput } from '../shared/SortInput';
@@ -8,13 +8,17 @@ export class TagResolver {
   @FieldResolver()
   async stories(@Root() tag: Tag, @Arg('data') { skip, take, sortBy, sortOrder }: SortInput) {
     return await Story.createQueryBuilder('s')
-      .select('s.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author')
-      .innerJoin('s.tags', 'tg', 'tg.id = :id', { id: tag.id })
-      .leftJoinAndSelect('s.tags', 'tag')
-      .orderBy(sortBy, sortOrder as any)
+      .select(
+        's.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author, ARRAY_AGG(t.name) as tags'
+      )
+      .innerJoin('story_tags_tag', 'st', 'st."storyId" = s.id')
+      .innerJoin('tag', 't', 'st."tagId" = t.id')
+      .groupBy('s.id')
+      .having(`bool_or(t.id = ${tag.id})`)
+      .orderBy(`s.${sortBy}`, sortOrder as any)
       .skip(skip)
       .take(take)
-      .getMany();
+      .getRawMany();
   }
 
   @Query(returns => [Tag])
@@ -27,6 +31,7 @@ export class TagResolver {
     return await Tag.findOne(id);
   }
 
+  @Authorized()
   @Mutation(returns => Tag)
   async addTag(@Arg('name') name: string) {
     return await Tag.create({ name }).save();
