@@ -24,11 +24,6 @@ export class TagResolver {
     return makeStories(raw);
   }
 
-  @Query()
-  currentDate(): Date {
-    return new Date();
-  }
-
   @Query(returns => [Tag])
   async getTags() {
     return await Tag.find();
