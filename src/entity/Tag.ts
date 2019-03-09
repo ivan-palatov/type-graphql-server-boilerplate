@@ -18,7 +18,7 @@ export class Tag extends BaseEntity {
   @Column('int', { default: 0 })
   count: number;
 
-  @Field(type => [Story])
+  @Field(type => [Story], { nullable: true })
   @ManyToMany(type => Story, story => story.tags)
   stories: Story[];
 }

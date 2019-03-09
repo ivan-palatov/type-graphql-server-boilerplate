@@ -1,9 +1,11 @@
 import { UserInputError } from 'apollo-server-core';
-import { Arg, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Story } from '../../entity/Story';
 import { PaginatedResult } from '../shared/PaginatedResult';
 import { SeekPaginationInput } from '../shared/SeedPaginationInput';
 import { SortInput } from '../shared/SortInput';
+import { AddStoryInput } from './inputs/AddStoryInput';
+import { AttachTagsInput } from './inputs/AttachTagsInput';
 
 @Resolver(of => Story)
 export class StoryResolver {
@@ -75,5 +77,32 @@ export class StoryResolver {
       throw new UserInputError('Author does not exist');
     }
     return stories;
+  }
+
+  @Mutation(returns => Boolean)
+  async attachTagsToStory(@Arg('data') { ids, storyId }: AttachTagsInput) {
+    try {
+      await Story.createQueryBuilder('s')
+        .relation('s.tags')
+        .of(storyId)
+        .add(ids);
+      return true;
+    } catch {
+      throw new UserInputError('Arguments are not valid');
+    }
+  }
+
+  @Mutation(returns => Story)
+  async addStory(@Arg('data') { title, description, author, text, tagIds }: AddStoryInput) {
+    try {
+      const story = await Story.create({ title, description, author, text }).save();
+      await Story.createQueryBuilder('s')
+        .relation('s.tags')
+        .of(story)
+        .add(tagIds);
+      return story;
+    } catch {
+      throw new UserInputError('Arguments are not valid');
+    }
   }
 }

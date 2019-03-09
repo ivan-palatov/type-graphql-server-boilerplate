@@ -1,6 +1,7 @@
 import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   Entity,
   Index,
@@ -77,4 +78,9 @@ export class Story extends BaseEntity {
   @ManyToMany(type => Tag, tag => tag.stories)
   @JoinTable()
   tags: Tag[];
+
+  @BeforeInsert()
+  setLength() {
+    this.length = this.text.length;
+  }
 }
