@@ -7,7 +7,7 @@ import { Story } from './Story';
 export class Tag extends BaseEntity {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
-  id: number;
+  readonly id: number;
 
   @Field()
   @Index()

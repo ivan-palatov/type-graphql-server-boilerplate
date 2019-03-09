@@ -7,7 +7,7 @@ import { BaseEntity, BeforeInsert, Column, Entity, Index, PrimaryGeneratedColumn
 export class User extends BaseEntity {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
-  id: number;
+  readonly id: number;
 
   @Field()
   @Column()
