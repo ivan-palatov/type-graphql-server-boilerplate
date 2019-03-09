@@ -132,6 +132,35 @@ export class TestClient {
     });
   }
 
+  static getStories(
+    skip: number = 0,
+    take: number = 10,
+    sortBy: string = 'length',
+    sortOrder: string = 'DESC'
+  ) {
+    return rp.post(url, {
+      ...options,
+      body: {
+        query: `{
+          getStories(data: {
+            skip: ${skip}
+            take: ${take}
+            sortBy: "${sortBy}"
+            sortOrder: "${sortOrder}"
+          }) {
+            count
+            stories {
+              id
+              title
+              description
+              tags
+            }
+          }
+        }`,
+      },
+    });
+  }
+
   static async seedStories(seed: number, amount: number, tags: Tag[]) {
     faker.seed(seed);
     const promises: Promise<any>[] = [];
@@ -145,10 +174,11 @@ export class TestClient {
           rating: faker.random.number({ min: 0, max: 100, precision: 2 }),
           seriesLink: faker.random.boolean() ? faker.internet.domainName() : undefined,
           text: faker.lorem.paragraphs(30),
-          date: new Date(),
+          date: faker.date.past(),
           title: faker.lorem.words(4),
-          views: 5400,
-          tags: tags.filter(tag => faker.random.boolean()),
+          views: Math.floor(Math.random() * 100000),
+          // belSow could be used Math random and comparison with .x values
+          tags: tags.filter(_ => faker.random.boolean() && faker.random.boolean()),
         }).save()
       );
     }

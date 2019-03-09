@@ -9,6 +9,7 @@ import Redis from 'ioredis';
 import 'reflect-metadata';
 import { formatArgumentValidationError } from 'type-graphql';
 import { createConnection } from 'typeorm';
+import { TestClient } from './testUtils/TestClient';
 import { testConn } from './testUtils/testConn';
 import { createSchema } from './utils/createSchema';
 
@@ -17,6 +18,8 @@ export const redis = new Redis();
 export const main = async () => {
   if (process.env.NODE_ENV === 'test') {
     await testConn(true);
+    const tags = await TestClient.seedTags(Math.floor(Math.random() * 1000), 30);
+    await TestClient.seedStories(Math.floor(Math.random() * 1000), 30, tags);
   } else {
     await createConnection();
   }
