@@ -1,7 +1,7 @@
 import { Arg, FieldResolver, Query, Resolver, Root } from 'type-graphql';
 import { Story } from '../../entity/Story';
 import { Tag } from '../../entity/Tag';
-import { makeStories } from '../../utils/makeStoriesFromRaw';
+import { makeStories } from '../../utils/makeStories';
 import { SortInput } from '../shared/SortInput';
 
 @Resolver(of => Tag)
@@ -10,7 +10,8 @@ export class TagResolver {
   async stories(@Root() tag: Tag, @Arg('data') { skip, take, sortBy, sortOrder }: SortInput) {
     const raw = await Story.createQueryBuilder('s')
       .select(
-        's.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author, s.seriesLink, ARRAY_AGG(t.id) as "tags"'
+        's.id, s.title, s.description, s.rating, s.views, s.date, s.length,' +
+          ' s.author, s.seriesLink, ARRAY_AGG(t.id) as tags'
       )
       .innerJoin('story_tags_tag', 'st', 'st."storyId" = s.id')
       .innerJoin('tag', 't', 'st."tagId" = t.id')

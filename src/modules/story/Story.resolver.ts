@@ -1,6 +1,8 @@
 import { UserInputError } from 'apollo-server-core';
 import { Arg, Query, Resolver } from 'type-graphql';
 import { Story } from '../../entity/Story';
+import { makeStories } from '../../utils/makeStories';
+import { makeStory } from '../../utils/makeStory';
 import { PaginatedResult } from '../shared/PaginatedResult';
 import { SeekPaginationInput } from '../shared/SeekPaginationInput';
 import { SortInput } from '../shared/SortInput';
@@ -13,7 +15,7 @@ export class StoryResolver {
     if (!story) {
       throw new UserInputError('Story with that id not found.');
     }
-    return story;
+    return makeStory(story);
   }
 
   @Query(returns => PaginatedResult)
@@ -27,7 +29,7 @@ export class StoryResolver {
       loadRelationIds: { relations: ['tags'] },
       order: { [sortBy]: sortOrder },
     });
-    return { stories, count };
+    return { stories: makeStories(stories), count };
   }
 
   @Query(returns => [Story])
@@ -39,23 +41,20 @@ export class StoryResolver {
     sortOrder,
     take,
   }: SeekPaginationInput) {
-    const query = Story.createQueryBuilder('s')
+    let query = Story.createQueryBuilder('s')
       .select('s.id, s.title, s.description, s.rating, s.views, s.date, s.length, s.author')
       .loadAllRelationIds({ relations: ['s.tags'] });
-    // If first time fetching
-    if (!lastId || !lastInOrder) {
-      return await query
-        .orderBy(`s.${sortBy} ${sortOrder}, s.id ${sortOrder}`)
-        .take(take)
-        .getMany();
+    if (lastId && lastInOrder) {
+      query = query.where(
+        `(s.${sortBy}, s.id) ${sortOrder === 'DESC' ? '<' : '>'} (:lastInOrder, :lastId)`,
+        { lastInOrder, lastId }
+      );
     }
-    // If fetching more than once
-    const where = `(s.${sortBy}, s.id) ${sortOrder === 'DESC' ? '<' : '>'} (:lastInOrder, :lastId)`;
-    return await query
-      .where(where, { lastInOrder, lastId })
+    const stories = await query
       .orderBy(`s.${sortBy} ${sortOrder}, s.id ${sortOrder}`)
       .take(take)
       .getMany();
+    return makeStories(stories);
   }
 
   @Query(returns => [Story])
@@ -68,6 +67,6 @@ export class StoryResolver {
     if (stories.length === 0) {
       throw new UserInputError('Author does not exist');
     }
-    return stories;
+    return makeStories(stories);
   }
 }
