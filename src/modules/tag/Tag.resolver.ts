@@ -8,6 +8,7 @@ import { SortInput } from '../shared/SortInput';
 export class TagResolver {
   @FieldResolver(returns => [Story], { nullable: true })
   async stories(@Root() tag: Tag, @Arg('data') { skip, take, sortBy, sortOrder }: SortInput) {
+    // NOTE: Theres probably a better way to do this
     const raw = await Story.createQueryBuilder('s')
       .select(
         's.id, s.title, s.description, s.rating, s.views, s.date, s.length,' +

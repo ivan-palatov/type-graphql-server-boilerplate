@@ -4,10 +4,8 @@ import cors from 'cors';
 import 'dotenv';
 import express from 'express';
 import session from 'express-session';
-import QueryComplexity, { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
 import Redis from 'ioredis';
 import 'reflect-metadata';
-import { formatArgumentValidationError } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import { Seeding } from './testUtils/Seeding';
 import { testConn } from './testUtils/testConn';
@@ -26,21 +24,19 @@ export const main = async () => {
   const schema = await createSchema();
   const apolloServer = new ApolloServer({
     schema,
-    formatError: formatArgumentValidationError as any,
     context: ({ req, res }) => ({ req, res, redis }),
     debug: false,
-    validationRules: [
-      QueryComplexity({
-        maximumComplexity: 50,
-        variables: {},
-        estimators: [
-          fieldConfigEstimator(),
-          simpleEstimator({
-            defaultComplexity: 1,
-          }),
-        ],
-      }),
-    ] as any,
+    // validationRules: [
+    //   QueryComplexity({
+    //     maximumComplexity: 50,
+    //     estimators: [
+    //       fieldConfigEstimator(),
+    //       simpleEstimator({
+    //         defaultComplexity: 1,
+    //       }),
+    //     ],
+    //   }),
+    // ] as any,
   });
 
   const app = express();
@@ -66,7 +62,7 @@ export const main = async () => {
     })
   );
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.clear();
