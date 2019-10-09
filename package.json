@@ -16,7 +16,7 @@
     "@types/node": "^11.11.6",
     "@types/nodemailer": "^4.6.6",
     "@types/request": "^2.48.3",
-    "@types/request-promise": "^4.1.42",
+    "@types/request-promise": "^4.1.44",
     "@types/uuid": "^3.4.4",
     "faker": "^4.1.0",
     "jest": "^24.5.0",
