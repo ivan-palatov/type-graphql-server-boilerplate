@@ -43,7 +43,7 @@
     "ioredis": "^4.14.1",
     "mysql": "^2.14.1",
     "nodemailer": "^5.1.1",
-    "pg": "^7.9.0",
+    "pg": "^7.12.1",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^0.17.0",
     "typeorm": "0.2.19",
